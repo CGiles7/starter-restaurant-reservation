@@ -27,8 +27,28 @@ function NewReservation() {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-    // ... (remaining handleSubmit code)
-  };
+  
+    try {
+      const response = await fetch(`${API_BASE_URL}/reservations`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ data: formData }),
+      });
+  
+      if (response.status === 201) {
+        const reservationDate = formData.reservation_date;
+        history.push(`/dashboard?date=${reservationDate}`);
+      } else {
+        const responseData = await response.json();
+        setErrors([responseData.error]);
+      }
+    } catch (error) {
+      console.error(error);
+      setErrors(["An unexpected error occurred."]);
+    }
+  };  
 
   const handleCancel = () => {
     history.goBack();
